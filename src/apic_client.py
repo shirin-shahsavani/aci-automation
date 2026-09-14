@@ -42,11 +42,9 @@ def login(session: requests.Session) -> str | None:
 
         # APIC accepts the token via APIC-Challenge header or cookie
         session.headers.update({"APIC-Challenge": token})
-        print(f"[+] Successfully authenticated to APIC: {APIC_HOST}")
         return token
 
     except requests.exceptions.RequestException as exc:
-        print(f"[-] Login failed: {exc}")
         return None
 
 
@@ -63,7 +61,7 @@ def logout(session: requests.Session) -> None:
 
     try:
         session.post(url, json=payload, timeout=5)
-        print("[+] Session successfully terminated.")
+        #print("[+] Session successfully terminated.")
     except requests.exceptions.RequestException as exc:
         print(f"[-] Logout warning: {exc}")
     finally:
