@@ -1,3 +1,5 @@
+import pytest
+
 import src.get_info as get_info
 
 def test_get_tenants(mocker):
@@ -178,3 +180,24 @@ def test_get_epgs(mocker):
     assert result == [
         " epg-test |   DN: uni/tn-tenant-test/ap-app-test/epg-epg-test"
     ]
+# Test connection error when APIC authentication fails
+def test_get_tenants_connection_error(mocker):
+    mocker.patch(
+        "src.get_info.get_apic_session",
+        return_value="fake_session"
+    )
+
+    mocker.patch(
+        "src.get_info.login",
+        return_value=None
+    )
+
+    mocker.patch("src.get_info.logout")
+
+    with pytest.raises(ConnectionError) as exc:
+        get_info.get_tenants()
+
+    assert str(exc.value) == (
+        "APIC connection failed. "
+        "Check .env values and network reachability."
+    )
