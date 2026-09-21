@@ -90,3 +90,23 @@ def get_managed_objects_by_class(
     response.raise_for_status()
 
     return response.json()
+
+
+
+def post_managed_object(session, class_name: str, attributes: dict):
+    url = f"https://{APIC_HOST}/api/mo/uni.json"
+
+    payload = {
+        class_name: {
+            "attributes": attributes
+        }
+    }
+
+    response = session.post(
+        url,
+        json=payload,
+        timeout=10
+    )
+    response.raise_for_status()
+
+    return response.json()

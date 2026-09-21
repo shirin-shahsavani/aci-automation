@@ -2,6 +2,7 @@ from fastapi import FastAPI , HTTPException , Request
 from pydantic import BaseModel
 from enum import Enum
 from src import get_info
+from src.create_objects import tenant
 
 
 class Input(BaseModel):
@@ -16,6 +17,9 @@ class ObjectType(str, Enum):
     bridge_domains = "bridge_domains"
     application_profiles = "application_profiles"
     epgs = "epgs"
+class TenantInput(BaseModel):
+    name: str
+
 
 @app.post("/info/{object_name}/")
 def show_objects(object_name: ObjectType):
@@ -38,4 +42,14 @@ def show_objects(object_name: ObjectType):
             detail=str(exc),
         )
 
+@app.post("/create/tenant/")
+def create_tenant_api(detail: TenantInput):
+    try:
+        result = tenant.create_tenant(detail.name)
+        return result
 
+    except ConnectionError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc)
+        )
