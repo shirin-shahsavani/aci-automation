@@ -93,8 +93,8 @@ def get_managed_objects_by_class(
 
 
 
-def post_managed_object(session, class_name: str, attributes: dict):
-    url = f"https://{APIC_HOST}/api/mo/uni.json"
+def post_managed_object(session,parent_dn: str, class_name: str, attributes: dict):
+    url = f"https://{APIC_HOST}/api/mo/{parent_dn}.json"
 
     payload = {
         class_name: {

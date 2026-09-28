@@ -31,6 +31,7 @@ def create_tenant(tenant_name: str):
 
         result = post_managed_object(
             session,
+            "uni",
             "fvTenant",
             {"name": tenant_name}
         )
@@ -43,9 +44,5 @@ def create_tenant(tenant_name: str):
 
     finally:
         logout(session)
-
-# if __name__ == "__main__":
-#     result = create_tenant("tenant--me")
-#     print(result)
 
 

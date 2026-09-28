@@ -2,7 +2,7 @@ from fastapi import FastAPI , HTTPException , Request
 from pydantic import BaseModel
 from enum import Enum
 from src import get_info
-from src.create_objects import tenant
+from src.create_objects import tenant,vrf
 
 
 class Input(BaseModel):
@@ -17,8 +17,13 @@ class ObjectType(str, Enum):
     bridge_domains = "bridge_domains"
     application_profiles = "application_profiles"
     epgs = "epgs"
+
 class TenantInput(BaseModel):
-    name: str
+    tenant_name: str
+
+class VRFInput(BaseModel):
+    tenant_name: str
+    vrf_name: str
 
 
 @app.post("/info/{object_name}/")
@@ -42,10 +47,23 @@ def show_objects(object_name: ObjectType):
             detail=str(exc),
         )
 
-@app.post("/create/tenant/")
+@app.post("/create/{tenant_name}/")
 def create_tenant_api(detail: TenantInput):
     try:
-        result = tenant.create_tenant(detail.name)
+        result = tenant.create_tenant(detail.tenant_name)
+        return result
+
+    except ConnectionError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail=str(exc)
+        )
+
+
+@app.post("/create/{tenant_name}/{vrf_name}")
+def create_vrf_api(detail:VRFInput):
+    try:
+        result = vrf.create_vrf(detail.tenant_name, detail.vrf_name)
         return result
 
     except ConnectionError as exc:
