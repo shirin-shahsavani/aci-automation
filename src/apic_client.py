@@ -93,7 +93,12 @@ def get_managed_objects_by_class(
 
 
 
-def post_managed_object(session,parent_dn: str, class_name: str, attributes: dict):
+def post_managed_object(
+        session,
+        parent_dn: str,
+        class_name: str,
+        attributes: dict
+):
     url = f"https://{APIC_HOST}/api/mo/{parent_dn}.json"
 
     payload = {
@@ -102,6 +107,37 @@ def post_managed_object(session,parent_dn: str, class_name: str, attributes: dic
         }
     }
 
+    response = session.post(
+        url,
+        json=payload,
+        timeout=10
+    )
+    response.raise_for_status()
+
+    return response.json()
+
+def post_managed_object_with_child(
+    session: requests.Session,
+    parent_dn: str,
+    class_name: str,
+    attributes: dict,
+    child_class_name: str,
+    child_attributes: dict,
+):
+    url = f"https://{APIC_HOST}/api/mo/{parent_dn}.json"
+
+    payload = {
+        class_name: {
+            "attributes": attributes,
+            "children": [
+                {
+                    child_class_name: {
+                        "attributes": child_attributes
+                    }
+                }
+            ]
+        }
+    }
     response = session.post(
         url,
         json=payload,

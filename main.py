@@ -2,7 +2,7 @@ from fastapi import FastAPI , HTTPException , Request
 from pydantic import BaseModel
 from enum import Enum
 from src import get_info
-from src.create_objects import tenant,vrf
+from src.create_objects import tenant,vrf,bridge_domain
 
 
 class Input(BaseModel):
@@ -71,3 +71,15 @@ def create_vrf_api(detail:VRFInput):
             status_code=503,
             detail=str(exc)
         )
+
+@app.post("/bridge-domains/{tenant_name}/{bd_name}/{vrf_name}")
+def create_bd_api(
+    tenant_name: str,
+    vrf_name: str,
+    bd_name: str,
+):
+    return bridge_domain.create_bd(
+        tenant_name=tenant_name,
+        vrf_name=vrf_name,
+        bd_name=bd_name,
+    )
